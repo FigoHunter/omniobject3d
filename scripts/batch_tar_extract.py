@@ -7,7 +7,7 @@ for root, dirs, files in os.walk(data_path):
     for file in files:
         file = os.path.join(root, file)
         if file.endswith('.tar.gz'):
-            target = file.removesuffix('.tar.gz')
+            target = file.replace('.tar.gz','')
             try:
                 print('extracting: '+file)
                 tar = tarfile.open(file,':gz')
