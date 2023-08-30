@@ -21,26 +21,20 @@ class LoadObjs(bpy.types.Operator):
                 if file.endswith('.obj'):
                     yield file
 
+    @classmethod
+    def poll(cls, context):
+        try:
+            return os.path.exists(context.scene.omniobject_props.dataPath) and os.path.isdir(context.scene.omniobject_props.dataPath)
+        except: return False
 
     def execute(self, context):
         items=[("None", "None","")]
-        for f in self.__walk(utils.DATASET_PATH):
+        for f in self.__walk(context.scene.omniobject_props.dataPath):
             data = os.path.abspath(f)
-            name=os.path.relpath(data, utils.DATASET_PATH)
+            name=os.path.relpath(data, context.scene.omniobject_props.dataPath)
             items.append((name, name[2:],""))
-        props.objList=items
-        
-        print(props.getObjFileList(None,None))
-    
-        # for l in self.divide_chunks(props.objList, 5):
-        #     prop = bpy.types.EnumProperty(
-        #         name = "",
-        #         description = "Obj File",
-        #         items = l
-        #     )
-        #     item=context.window_manager.dropdown_collection.add()
-        #     item.objFile=prop
-
+        props.setObjFileList(items,context)
+        context.scene.omniobject_props.objFile="None"
         return {'FINISHED'}
 
 
@@ -57,15 +51,15 @@ class AddObj(bpy.types.Operator):
     def poll(cls, context):
         try:
             # Enable button only if in Object Mode
-            selected = context.window_manager.omniobject_props.objFile
-            path = os.path.join(utils.DATASET_PATH, selected)
+            selected = context.scene.omniobject_props.objFile
+            path = os.path.join(context.scene.omniobject_props.dataPath, selected)
             return os.path.exists(path)
         except: return False
 
 
     def execute(self, context):
-        selected = context.window_manager.omniobject_props.objFile
-        path = os.path.join(utils.DATASET_PATH, selected)
+        selected = context.scene.omniobject_props.objFile
+        path = os.path.join(context.scene.omniobject_props.dataPath, selected)
         print(path)
         if os.path.exists(path):
             bpy.ops.import_scene.obj(filepath=path)
@@ -92,7 +86,7 @@ class SelectObj(bpy.types.Operator):
 
 
     def execute(self, context):
-        context.window_manager.omniobject_props.objFile = self.obj_list
+        context.scene.omniobject_props.objFile = self.obj_list
         return {'FINISHED'}
 
     def invoke(self, context, event):

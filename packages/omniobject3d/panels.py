@@ -1,5 +1,6 @@
 import bpy
 from . import props
+from . import utils
 
 class OmniObject_PT_LoadObjects(bpy.types.Panel):
     bl_label = "Load Obj Models"
@@ -10,15 +11,14 @@ class OmniObject_PT_LoadObjects(bpy.types.Panel):
 
 
     def draw(self, context):
-
         layout = self.layout
+        layout.label(text='Dataset Path:')
+        layout.prop(context.scene.omniobject_props,"dataPath")
 
         layout.operator("omniobject.loadobjs", text="Reload Objects")
         layout.separator()
         layout.label(text="Select Objects:")
 
-        row = layout.row(align=True)
-        layout.operator("omniobject.selectobj",text=context.window_manager.omniobject_props.objFile)
-
+        layout.operator("omniobject.selectobj",text=context.scene.omniobject_props.objFile)
         layout.operator("omniobject.addobj", text="Add")
 
