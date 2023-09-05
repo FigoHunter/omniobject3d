@@ -3,7 +3,7 @@ import tarfile
 import threading
 from queue import Queue
 
-THREADCOUNT=4
+THREADCOUNT=16
 data_path='./OpenXD-OmniObject3D-New/'
 
 q = Queue(maxsize=100)
