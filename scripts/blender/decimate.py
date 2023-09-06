@@ -2,7 +2,6 @@ import bpy
 import os
 from blender_figo import file
 from blender_figo import environ
-from blender_figo.obj import modifier as bf_modifier
 import math
 import threading
 import psutil
@@ -65,8 +64,7 @@ if __name__=='__main__':
         name = os.path.basename(f)
         f=os.path.abspath(f)
         target = f.replace("raw_scans","decimated")
-        @bpy.app.handlers.persistent
-        def postaction(dummy):
+        def postaction():
             process(f,target)
         file.newFile(postaction)
         
