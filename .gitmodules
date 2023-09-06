@@ -1,0 +1,3 @@
+[submodule "packages/blender_figo"]
+	path = packages/blender_figo
+	url = git@github.com:FigoHunter/blender-figo.git
