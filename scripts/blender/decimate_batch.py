@@ -11,7 +11,7 @@ from queue import Queue
 PROCESS_COUNT=4
 BATCH_SIZE=10
 
-fileQ=Queue(maxsize=PROCESS_COUNT)
+fileQ=Queue()
 
 
 # Yield successive n-sized
@@ -32,7 +32,12 @@ def startProcessThread(q,index):
             continue
         print(f"[THREAD-{index}] Working On: {path}")
         with open(os.path.splitext(path)[0]+".log","w") as f:
-            process = subprocess.Popen(f"chmod +x {path}&&{path}", shell=True, stdout=f, stderr=f)
+            if platform.system().lower() == 'windows':
+                process = subprocess.Popen(f"{path}", shell=True, stdout=f, stderr=f)
+            elif platform.system().lower() == 'linux':
+                process = subprocess.Popen(f"chmod +x {path}&&{path}", shell=True, stdout=f, stderr=f)
+            else:
+                raise Exception('系统未支持: '+ platform.system().lower())
             process.wait()
         print(f"[THREAD-{index}] Done")
 
