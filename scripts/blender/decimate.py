@@ -54,9 +54,11 @@ def process(input, output):
     file.exportFile(output)
 
 if __name__=='__main__':
-    ppid=int(environ.getEnvVar("PARENT_PID"))
-    t=threading.Thread(None,checkParentProcess,"CheckParentProcess",(ppid,),daemon=True)
-    t.start()
+    ppid=environ.getEnvVar("PARENT_PID")
+    if ppid:
+        ppid=int(ppid)
+        t=threading.Thread(None,checkParentProcess,"CheckParentProcess",(ppid,),daemon=True)
+        t.start()
     objs = environ.getEnvVarAsList("ROSITA_OBJS")
     import bpy
     for f in objs:
