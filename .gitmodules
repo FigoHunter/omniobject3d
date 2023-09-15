@@ -1,3 +1,6 @@
 [submodule "packages/blender_figo"]
 	path = packages/blender_figo
 	url = git@github.com:FigoHunter/blender-figo.git
+[submodule "Unity-Physical-Alignment"]
+	path = Unity-Physical-Alignment
+	url = git@github.com:FigoHunter/Physical-Alignment.git
