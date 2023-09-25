@@ -45,10 +45,12 @@ ls=[]
 mesh.transform(mat)
 ls.append(mesh)
 bbox = mesh.get_minimal_oriented_bounding_box()
-
 points = bbox.get_box_points()
-print(points)
+# points[0][1]=1000
+# bbox = o3d.geometry.OrientedBoundingBox.create_from_points(points)
+points = bbox.get_box_points()
 np_points = np.asarray(points)
+print(np_points.shape)
 
 print(np_points)
 

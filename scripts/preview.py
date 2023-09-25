@@ -35,48 +35,29 @@ def drawbox(points):
 
 
 def preview(path):
-    with open(os.path.join(path,'Scan.json'),'r') as f:
-        data = json.load(f)['data']
+    data=np.load(os.path.join(path,'align.npy'),allow_pickle=True)
+    print(f'==================')
+    print(data)
     for piece in data:
-        coord_mesh = o3d.geometry.TriangleMesh.create_coordinate_frame()
+        coord_mesh1 = o3d.geometry.TriangleMesh.create_coordinate_frame()
+        coord_mesh1.translate(piece['extent']['min'])
+        coord_mesh2 = o3d.geometry.TriangleMesh.create_coordinate_frame()
+        coord_mesh2.translate(piece['extent']['max'])
         mesh = o3d.io.read_triangle_mesh(os.path.join(path,'Scan.obj'))
         mat = piece['matrix']
         mesh.transform(mat)
-        bbox = align.getBboxOfAlignedY(mesh)
+        bbox = mesh.get_axis_aligned_bounding_box()
         points = bbox.get_box_points()
         points = [points[x] for x in points_index]
         box_shape=drawbox(points)
 
-        coord_mesh.translate(points[0])
-        o3d.visualization.draw_geometries([box_shape,mesh,coord_mesh])
-
-def process(path):
-    with open(os.path.join(path,'Scan.json'),'r') as f:
-        data = json.load(f)['data']
-    out_data=[]
-    for piece in data:
-        out_data_piece={}
-        mesh = o3d.io.read_triangle_mesh(os.path.join(path,'Scan.obj'))
-        mat = piece['matrix']
-        mesh.transform(mat)
-        rot = align.getOrientationOfAlignedY(mesh)
-        rot = utils.getAffineMat(rot)
-        mesh.transform(rot)
-        mat = rot@mat
-        bbox = mesh.get_axis_aligned_bounding_box()
-        min = bbox.get_min_bound()
-        max = bbox.get_max_bound()
-        out_data_piece['matrix']=mat
-        out_data_piece['extent']={'min':min,'max':max}
-        out_data.append(out_data_piece)
-    np.save(os.path.join(path,'align.npy'),out_data)
+        o3d.visualization.draw_geometries([box_shape,mesh,coord_mesh1,coord_mesh2])
 
 
 paths = glob.glob(os.path.join(dir_path,'*','*','Scan'))
 for p in paths:
     print(os.path.abspath(p))
     try:
-        process(p)
+        preview(p)
     except Exception as e:
-        with open(os.path.join(p,'error_align.log'),'w') as f:
-            f.write(str(e))
+        print(e)
